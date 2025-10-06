@@ -1,32 +1,33 @@
 <?php
 require_once './db.php';
-$conn = mysqli_connect('db', 'root', 'qwerty', 'db1');
+$link = mysqli_connect('db', 'root', 'qwerty', 'db1');
 
 session_start();
 
 $error_message = '';
 
-if (isset($_POST['submit'])) {
-    $login = $_POST['login'] ?? '';
-    $pass = $_POST['password'] ?? '';
+if (isset($_POST['submit'])) 
+{
+    $username = $_POST['login'] ?? '';
+    $password = $_POST['password'] ?? '';
 
-    if (empty($login) || empty($pass)) {
-        $error_message = 'Please fill in all fields';
+    if (!$username || !$password) {
+        $error = 'Filed is empty';
     } else {
-        $query = "SELECT * FROM users WHERE username='$login' AND password='$pass'";
-        $result = mysqli_query($conn, $query);
+        $sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+        $result = mysqli_query($link, $sql);
 
-        if (mysqli_num_rows($result) === 1) {
-            setcookie("User", $login, time() + 7200, "/");
+        if (mysqli_num_rows($result) == 1) {
+            setcookie("User", $username, time() + 7200, "/");
             header('Location: profile.php');
             exit;
         } else {
-            $error_message = 'Invalid username or password';
+            $error = "Wrong credentials";
         }
     }
 }
 
-mysqli_close($conn);
+mysqli_close($link);
 ?>
 
 <!DOCTYPE html>
